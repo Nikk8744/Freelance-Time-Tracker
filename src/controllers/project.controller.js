@@ -95,7 +95,8 @@ const updateProject = async(req, res) => {
 
     try {
         const project = await Project.findById(projectId);
-        if(project?.userId.toString() !== req.user?.toString()){
+
+        if(project.userId?.toString() !== req.user?._id.toString()){
             return res.status(400).json({ msg: "You are not authorized to make changes to this project!!"})
         }
 
@@ -124,7 +125,25 @@ const updateProject = async(req, res) => {
     } catch (error) {
         return res.status(500).json({msg: "Some server error occured while updating project!! :("});
     } 
-}
+};
+
+const deleteProject = async(req, res) => {
+    const { projectId } = req.params;
+    if(!isValidObjectId(projectId)){
+        return res.status(401).json({msg: "Invalid objectId or project ID"})
+    }
+
+
+    const deleteProject = await Project.findByIdAndDelete(projectId);
+    if (!deleteProject) {
+        return res.status(404).json({msg: "Project not found to delete"})
+    }
+
+    return res.status(200).json({
+        deleteProject,
+        msg: "Project deleted successfully!!"
+    })
+};
 
 export {
     createProject,
@@ -132,4 +151,5 @@ export {
     getAllProjectsOfAUser,
     getAllProjects,
     updateProject,
+    deleteProject,
 }

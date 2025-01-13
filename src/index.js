@@ -15,13 +15,13 @@ app.use(cookieParser());
 // all routes
 import userRoutes from './routes/user.routes.js'
 import projectRoutes from './routes/project.routes.js'
-// import logRoutes from './routes/timeLogs.routes.js'
+import logRoutes from './routes/log.routes.js'
 // import summaryRoutes from './routes/summary.routes.js'
 
 // // routes udage
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/project", projectRoutes);
-// app.use("/api/v1/logs", logRoutes);
+app.use("/api/v1/logs", logRoutes);
 // app.use("/api/v1/summary", summaryRoutes);
 
 connectDB()
