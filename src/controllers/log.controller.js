@@ -88,7 +88,6 @@ const stopLogTime = async (req, res) => {
     }
 };
 
-
 export {
     startLogTime,
     stopLogTime,
