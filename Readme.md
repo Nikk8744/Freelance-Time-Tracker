@@ -16,6 +16,10 @@
     - validate that start and end time is in the correct format.
 - Add error handling.
 
+##### Advance to dos
+- can add task mgmt system also
+
+
 
 
 _________________________
@@ -23,3 +27,4 @@ _________________________
 - when a log is added it should be added to project.logs array as well
 - when a log is removed/deleted it should be removed from project.logs array as well
 - log duration calculation can be done in hours - need to update the calculation logic.
+- implement all the validation logic for all routes and parameters
