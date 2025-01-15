@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
 };
 
 const generateAccessAndRefreshTokens = async(userId) => {
-    // try {
+    try {
         const user = await User.findById(userId);
         const accessToken = await user.generateAccessToken();
         const refreshToken = await user.generateRefreshToken();
@@ -49,9 +49,9 @@ const generateAccessAndRefreshTokens = async(userId) => {
 
         return { accessToken, refreshToken }
 
-    // } catch (error) {
-    //     return res.status(500).json({ msg: "Something went wrog while generating access abnd refresh token :("})
-    // }
+    } catch (error) {
+        return res.status(500).json({ msg: "Something went wrog while generating access abnd refresh token :("})
+    }
 }
 
 const loginUser = async (req, res) => {
@@ -67,7 +67,7 @@ const loginUser = async (req, res) => {
     if (!user) {
         return res.status(404).json({ msg: "User not found, this user does not exists"})
     }
-    console.log(user)
+    // console.log(user)
     const isPasswordValid = await user.isPasswordCorrect(password);
     // console.log(isPasswordValid)
     if (!isPasswordValid) {
