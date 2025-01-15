@@ -24,6 +24,19 @@ const userValidationRules = () => [
         .matches(/[\W_]/).withMessage('Password must contain at least one special character'), // Checks for at least one special character
 ];
 
+const userLoginValidationRules = () => [
+    body('email')
+        .trim()
+        .normalizeEmail()
+        .isEmail().withMessage("Please enter a valid email address"),
+
+    body('password')
+        .trim()
+        .isLength({ min: 5}).withMessage("password must be 5 characters long")
+        .matches(/[A-Z]/).withMessage('Password must contain at least one capital letter') 
+        .matches(/[\W_]/).withMessage('Password must contain at least one special character'),
+]
+
 const validate = (req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
@@ -34,5 +47,6 @@ const validate = (req, res, next) => {
 
 export {
     userValidationRules,
-    validate
+    validate,
+    userLoginValidationRules,
 }
