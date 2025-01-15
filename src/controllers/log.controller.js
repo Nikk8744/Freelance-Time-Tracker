@@ -188,7 +188,7 @@ const getAllLogsOfAProject = async (req, res) => {
     };
 
     try {
-        const logs = await Log.find({projectId}).sort({createdAt: -1}).populate('projectId userId');;
+        const logs = await Log.find({projectId}).populate('projectId userId').sort({createdAt: -1});
         if(!logs){
             return res.status(404).json({msg: "No logs found for this project!!"});
         }
