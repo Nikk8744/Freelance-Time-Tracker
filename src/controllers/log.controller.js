@@ -54,7 +54,7 @@ const stopLogTime = async (req, res) => {
     try {
         const log = await Log.findById(logId);
         if (!log) {
-            return res.status(404).json({ msg: "Log not found!!"})
+            return res.status(404).json({ msg: "Log not found!!"});
         }
         if(log.endTimeOfLog){
             return res.status(400).json({ msg: "Log has alraeady stopped!!"})
