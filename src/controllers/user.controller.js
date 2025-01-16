@@ -57,8 +57,8 @@ const generateAccessAndRefreshTokens = async(userId) => {
 const loginUser = async (req, res) => {
 
     const { userName, email, password } = req.body;
-    if (!userName || !email ) {
-        return res.status(400).json({ msg: "Username or email is reqyuired"})
+    if (!(!userName || !email )) {
+        return res.status(400).json({ msg: "Username or email is required"})
     }
 
     const user = await User.findOne({

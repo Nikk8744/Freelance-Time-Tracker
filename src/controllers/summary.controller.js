@@ -15,7 +15,7 @@ const getTotalHoursPerProject = async (req, res) => {
     const projects = await Project.find({userId}).populate("logs")
     // console.log(projects)
     if (!projects) {
-        return res.status(400).json({msg: "No project logs found for this user!!"})
+        return res.status(404).json({msg: "No project logs found for this user!!"})
     }
 
     const totalHoursPerProject = projects.map(project => {

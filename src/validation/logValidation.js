@@ -1,7 +1,7 @@
 import { body, param, validationResult } from "express-validator"
 
 const startLogValidationRules = () => [
-    body('projectId')
+    param('projectId')
         .not().isEmpty()
         .withMessage('Project ID is required')
         .isMongoId()

@@ -5,9 +5,74 @@ import { exportProjectSummariesInCsv } from "../utils/export.utils.js";
 
 const router = Router();
 
+/**
+ * @swagger
+ * /summary/getTotalHoursPerProject:
+ *   get:
+ *     summary: Get the total hours per project of user
+ *     tags: [Summary]
+ *     description: This endpoint allows user to get the total hours per project
+ *     responses:
+ *       200:
+ *         description: Total Hours of each of user's projects retruved and calculated successfully
+ *       500:
+ *         description: Server error while calculating total hours of user's projects
+ */
 router.route("/getTotalHoursPerProject").get(verifyJWT, getTotalHoursPerProject);
+
+/**
+ * @swagger
+ * /summary/getTotalHoursForADateRange:
+ *   get:
+ *     summary: Get the total hours for a specific date range
+ *     tags: [Summary]
+ *     description: This endpoint allows user to get the total hours for a specific date range
+ *     requestBody: 
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - startDate
+ *               - endDate
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Date from when you want to get the total hours
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Date till when you want to get the total hours
+ *     responses:
+ *       200:
+ *         description: Total Hours for a specific date range retrived and calculated successfully
+ *       500:
+ *         description: Server error while calculating total hours of user's date range
+ */
 router.route("/getTotalHoursForADateRange").get(verifyJWT, getTotalHoursForADateRange);
 
-router.route("/download/:projectId/csv").get(verifyJWT, exportProjectSummariesInCsv)
+/**
+ * @swagger
+ * /project/download/{projectId}/csv:
+ *   get:
+ *     summary: To export the Project summaries 
+ *     tags: [Summary]
+ *     description: This endpoint allows a user to download the project summaries in csv format
+ *     parameters:
+ *       - name: projectId
+ *         in: path
+ *         required: true
+ *         description: The ID of the project to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Project summaries retrieved and downloaded successfully
+ *       404:
+ *         description: Project not found
+ */
+router.route("/download/:projectId/download").get(verifyJWT, exportProjectSummariesInCsv)
 
 export default router;

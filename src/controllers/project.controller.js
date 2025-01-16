@@ -114,7 +114,7 @@ const updateProject = async(req, res) => {
         );
 
         if(!updateProject){
-            return res.status(401).json({msg: "Something went worong while uipdating project"})
+            return res.status(401).json({msg: "Something went worong while updating project"})
         }
 
         return res.status(200).json({

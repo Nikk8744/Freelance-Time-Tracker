@@ -5,7 +5,7 @@ import { Log } from "../models/log.model.js";
 const startLogTime = async (req, res) => {
     
     const userId = req.user?._id;
-    const { projectId } = req.body;
+    const { projectId } = req.params;
 
     if(!isValidObjectId(projectId)){
         return res.status(400).json({msg: "Invalid porject ID"})
@@ -48,7 +48,7 @@ const stopLogTime = async (req, res) => {
         return res.status(400).json({ msg: "Invalid log ID!!"})
     }
     if(!name || !description){
-        return res.status(400).json({msg: "Broo name and description are required while stoppign the timer brother!!"})
+        return res.status(401).json({msg: "Broo name and description are required while stoppign the timer brother!!"})
     }
 
     try {
