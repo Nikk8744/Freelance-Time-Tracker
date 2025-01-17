@@ -46,7 +46,7 @@ const startLogTime = async (req, res) => {
 
 const stopLogTime = async (req, res) => {
     const { logId, taskId } = req.params;
-    const { name, description, /**taskId */ } = req.body;
+    const { name, description } = req.body;
     if(!isValidObjectId(logId)){
         return res.status(400).json({ msg: "Invalid log ID!!"})
     }
@@ -54,7 +54,7 @@ const stopLogTime = async (req, res) => {
         return res.status(401).json({msg: "Broo name and description are required while stoppign the timer brother!!"})
     }
 
-    try {
+    // try {
         const log = await Log.findById(logId);
         if (!log) {
             return res.status(404).json({ msg: "Log not found!!"})
@@ -105,9 +105,9 @@ const stopLogTime = async (req, res) => {
             updatedLog,
             msg: "Log stopped successfully!!"
         });
-    } catch (error) {
-        return res.status(500).json({ msg: "Server error occurred while stopping the log!!" })
-    }
+    // } catch (error) {
+    //     return res.status(500).json({ msg: "Server error occurred while stopping the log!!" })
+    // }
 };
 
 const updateTimeLog = async (req, res) => {

@@ -46,7 +46,7 @@ router.route("/start/:projectId").post(verifyJWT, startLogValidationRules(), val
  *         description: The log ID to stop the time for.
  *         schema:
  *           type: string
- *       - name: taskid
+ *       - name: taskId
  *         in: path
  *         required: true
  *         description: The task ID to stop the time for.
@@ -183,8 +183,30 @@ router.route("/getAllLogsOfAProject/:projectId").get(verifyJWT, getAllLogsOfAPro
  */
 router.route("/getAllLogsOfAUser").get(verifyJWT, getAllLogsForAUser)
 
-router.route("/assignLogToTask/log/:logId/task/:taskId").patch(verifyJWT, addLogToTask)
+// router.route("/assignLogToTask/log/:logId/task/:taskId").patch(verifyJWT, addLogToTask)
 
+/**
+ * @swagger
+ * /logs/getAllLogsOfATask/{taskId}:
+ *   get:
+ *     summary: Get all logs for a task
+ *     tags: [Logs]
+ *     description: This endpoint allows a user to get all the time logs for a specific task.
+ *     parameters:
+ *       - name: taskId
+ *         in: path
+ *         required: true
+ *         description: The ID of the task to retrieve logs for.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Logs for task retrieved successfully
+ *       404:
+ *         description: Project not found
+ *       500:
+ *         description: Server error
+ */
 router.route("/getAllLogsOfATask/:taskId").get(verifyJWT, getAllLogsOfATask);
 
 export default router;

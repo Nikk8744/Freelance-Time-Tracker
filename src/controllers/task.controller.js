@@ -251,6 +251,29 @@ const updateChecklistItem = async (req, res) => {
 //     }
 // }
 
+const getTaskById = async (req, res) => {
+   
+        const { taskId } = req.params;  
+        if (!isValidObjectId(taskId)) {
+            throw new ApiError(400, "Invalid Task ID");
+        }
+        try {
+          // Find task by taskId in the database
+          const task = await Task.findById(taskId);
+      
+          if (!task) {
+            throw new ApiError(404, "Task not found");
+          }
+      
+          // Return the task as response
+          return res.status(200).json(
+            new ApiResponse(200, task, "Task fetched successfully :)")
+          )
+
+        } catch (error) {
+            throw new ApiError(500, "Internal Server Error while getting task by id!!");
+        }
+};
 
 export {
     createTask,
@@ -262,4 +285,5 @@ export {
     addChecklistItem,
     updateChecklistItem,
     // getTasksForAProject,
+    getTaskById,
 }
