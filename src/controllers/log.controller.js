@@ -1,6 +1,9 @@
 import { isValidObjectId } from "mongoose";
 import { Project } from "../models/project.model.js";
 import { Log } from "../models/log.model.js";
+import { ApiError } from "../utils/ApIError.js";
+import { Task } from "../models/task.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const startLogTime = async (req, res) => {
     
@@ -42,8 +45,8 @@ const startLogTime = async (req, res) => {
 };
 
 const stopLogTime = async (req, res) => {
-    const { logId } = req.params;
-    const { name, description } = req.body;
+    const { logId, taskId } = req.params;
+    const { name, description, /**taskId */ } = req.body;
     if(!isValidObjectId(logId)){
         return res.status(400).json({ msg: "Invalid log ID!!"})
     }
@@ -54,12 +57,17 @@ const stopLogTime = async (req, res) => {
     try {
         const log = await Log.findById(logId);
         if (!log) {
-            return res.status(404).json({ msg: "Log not found!!"});
+            return res.status(404).json({ msg: "Log not found!!"})
         }
         if(log.endTimeOfLog){
             return res.status(400).json({ msg: "Log has alraeady stopped!!"})
         }
-    
+        
+        const task = await Task.findById(taskId);
+        if(!task){
+            return res.status(404).json({ msg: "This Task not found!!"})
+        }
+
         const endTime = new Date();
         const timeSpent = (endTime - log.startTimeOfLog) / (1000 * 60 * 60 );
     
@@ -72,7 +80,8 @@ const stopLogTime = async (req, res) => {
                     name,
                     description,
                     endTimeOfLog: endTime,
-                    timeSpent: timeSpent
+                    timeSpent: timeSpent,
+                    task: taskId || log.task
                 }
             },
             { new: true }
@@ -83,7 +92,15 @@ const stopLogTime = async (req, res) => {
                 totalHours: timeSpent,
             }
         });
-    
+        
+        if(taskId){
+            await Task.findByIdAndUpdate(taskId, {
+                $inc: {
+                    totalTimeSpentOnTask: timeSpent,
+                },
+            })
+        }
+        
         return res.status(200).json({
             updatedLog,
             msg: "Log stopped successfully!!"
@@ -224,6 +241,56 @@ const getAllLogsForAUser = async (req, res) => {
     }
 };
 
+const getAllLogsOfATask = async (req, res) => {
+    const { taskId } = req.params;
+    if(!isValidObjectId(taskId)){
+        return res.status(400).json({msg : "Invalid Task Id"});
+    }
+
+    try {
+        const task = await Task.findById(taskId);
+        if (!task) {
+            throw new ApiError(404, "No task found!!!!")
+        }
+
+        const logs = await Log.find({ task: task?._id}).populate('task');
+        if(!logs){
+            throw new ApiError(404, "No logs found for this task!!")
+        }
+
+        return res.status(200).json(
+            new ApiResponse(200, logs, "All logs of this task fetched successfully!!")
+        )
+    } catch (error) {
+        throw new ApiError(500, "Ineternal server error while retriving all logs of this task")
+    }
+};
+
+const addLogToTask = async (req, res) => {
+    const { logId, taskId } = req.params;
+    if (!isValidObjectId(logId) || !isValidObjectId(taskId)) {
+        throw new ApiError(400, "Invalid Log ID or Task ID");
+    }
+
+    try {
+        const log = await Log.findById(logId);
+        const task = await Task.findById(taskId);
+        if(!log || !task){
+            throw new ApiError(404, "Log or Task not found");
+        }
+
+        log.task = task._id;
+        await log.save();
+
+        return res.status(200).json(
+            new ApiResponse(200, log, "Log added to task successfully :)")
+        )
+
+    } catch (error) {
+        throw new ApiError(500, "Internal Server Error while adding logs to task!!");
+    }
+}
+
 export {
     startLogTime,
     stopLogTime,
@@ -231,4 +298,6 @@ export {
     deleteTimeLog,
     getAllLogsOfAProject,
     getAllLogsForAUser,
+    getAllLogsOfATask,
+    addLogToTask
 }

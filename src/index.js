@@ -6,10 +6,8 @@ import cookieParser from 'cookie-parser';
 import connectDB from './db/index.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-// import { createServer } from 'http';
 
 const app = express();
-// const server = createServer(app);
 
 // Apply rate limiting to all requests
 // ye ek linit set krega so that ek user uss limit jitni requests hi kr skta
@@ -51,12 +49,14 @@ import userRoutes from './routes/user.routes.js'
 import projectRoutes from './routes/project.routes.js'
 import logRoutes from './routes/log.routes.js'
 import summaryRoutes from './routes/summary.routes.js'
+import taskRoutes from './routes/task.routes.js'
 
 // // routes udage
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/project", projectRoutes);
 app.use("/api/v1/logs", logRoutes);
 app.use("/api/v1/summary", summaryRoutes);
+app.use("/api/v1/task", taskRoutes);
 
 connectDB()
     .then(() => {
@@ -66,9 +66,6 @@ connectDB()
     })
     .catch((err) => {
         console.log("MongoDB connection failed", err)
-    })
+    });
 
-// app.listen(process.env.PORT, () => {
-//     console.log(`Server is running on port ${process.env.PORT}`);   
-// })
 

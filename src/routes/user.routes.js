@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, logOutUser, registerUser } from "../controllers/user.controller.js";
+import { loginUser, logOutUser, registerUser, updateUserDetails } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { userLoginValidationRules, userValidationRules, validate } from "../validation/userValidation.js";
 
@@ -100,5 +100,40 @@ router.route('/login').post(userLoginValidationRules(), validate, loginUser)
  *         description: Unauthorized (not logged in)
  */
 router.route("/logout").post(verifyJWT, logOutUser)
+
+/**
+ * @swagger
+ * /user/update:
+ *   patch:
+ *     summary: Update User Details
+ *     tags: [User]
+ *     description: This endpoint allows a user to update an existing time log entry.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name you want to update.
+ *               userName:
+ *                 type: string
+ *                 description: The username you want to update
+ *               email:
+ *                 type: string
+ *                 description: The email you want to update
+ *     responses:
+ *       200:
+ *         description: User details updated successfully
+ *       409:
+ *         description: Username or email already in use.
+ *       404:
+ *         description: Log not found
+ *       500:
+ *         description: Something went wrong while updating the user details.
+ */
+router.route("/update").patch(verifyJWT, updateUserDetails);
 
 export default router;

@@ -33,11 +33,11 @@ const logUpdateValidationRules = () => [
         .trim()
         .isLength({ min: 5 }).withMessage('Description must be at least 5 characters long'),
 
-    body('userId')
-        .not().isEmpty()
-        .withMessage('User ID is required')
-        .isMongoId()
-        .withMessage('User ID must be a valid MongoDB ObjectId'),
+    // body('userId')
+    //     .not().isEmpty()
+    //     .withMessage('User ID is required')
+    //     .isMongoId()
+    //     .withMessage('User ID must be a valid MongoDB ObjectId'),
     
     body('startTimeOfLog')
         .optional()

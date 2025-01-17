@@ -19,7 +19,15 @@
 ##### Advance to dos
 - can add task mgmt system also
 
+## new project feature
+- add a owner to project - the owner can be a user/ the one who created the project
+- add a team/members to project - the team/members can be a list of users
+- only those team members can create their tasks in that project
+- 
 
+
+-----
+- when i delete a log it should be deleted form project and task as well
 
 
 _________________________

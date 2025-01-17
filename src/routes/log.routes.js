@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { deleteTimeLog, getAllLogsForAUser, getAllLogsOfAProject, startLogTime, stopLogTime, updateTimeLog } from "../controllers/log.controller.js";
+import { addLogToTask, deleteTimeLog, getAllLogsForAUser, getAllLogsOfAProject, getAllLogsOfATask, startLogTime, stopLogTime, updateTimeLog } from "../controllers/log.controller.js";
 import { logUpdateValidationRules, startLogValidationRules, stopLogValidationRules, validate } from "../validation/logValidation.js";
+
 
 const router = Router();
 
@@ -33,7 +34,7 @@ router.route("/start/:projectId").post(verifyJWT, startLogValidationRules(), val
 
 /**
  * @swagger
- * /logs/stop/{logId}:
+ * /logs/stop/{logId}/task/{taskId}:
  *   post:
  *     summary: Stop logging time for a project
  *     tags: [Logs]
@@ -45,17 +46,39 @@ router.route("/start/:projectId").post(verifyJWT, startLogValidationRules(), val
  *         description: The log ID to stop the time for.
  *         schema:
  *           type: string
+ *       - name: taskid
+ *         in: path
+ *         required: true
+ *         description: The task ID to stop the time for.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *             properties: 
+ *               name:
+ *                 type: string
+ *                 description: The name of the project
+ *               description:
+ *                 type: string
+ *                 description: The description of the project 
  *     responses:
  *       200:
  *         description: Time logging stopped successfully
  *       400:
- *         description: Bad request (validation errors)
+ *         description: Bad request (validation errors)- Name and description are required to stop the log
  *       404:
  *         description: Log not found
  *       500:
  *         description: Server error
  */
-router.route("/stop/:logId").post(verifyJWT, stopLogValidationRules(), validate, stopLogTime);
+router.route("/stop/:logId/task/:taskId").post(verifyJWT, stopLogValidationRules(), validate, stopLogTime);
 
 /**
  * @swagger
@@ -159,5 +182,9 @@ router.route("/getAllLogsOfAProject/:projectId").get(verifyJWT, getAllLogsOfAPro
  *         description: Server error
  */
 router.route("/getAllLogsOfAUser").get(verifyJWT, getAllLogsForAUser)
+
+router.route("/assignLogToTask/log/:logId/task/:taskId").patch(verifyJWT, addLogToTask)
+
+router.route("/getAllLogsOfATask/:taskId").get(verifyJWT, getAllLogsOfATask);
 
 export default router;

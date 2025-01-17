@@ -30,6 +30,10 @@ const logSchema = new Schema(
             default: 0,
             required: true,
         },
+        task: {
+            type: Schema.Types.ObjectId,
+            ref: "Task",
+        }
     },
     { 
         timestamps: true,
