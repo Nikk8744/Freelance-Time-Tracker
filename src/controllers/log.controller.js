@@ -1,7 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { Project } from "../models/project.model.js";
 import { Log } from "../models/log.model.js";
-import { ApiError } from "../utils/ApIError.js";
+import { ApiError } from "../utils/ApiError.js";
 import { Task } from "../models/task.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -11,13 +11,15 @@ const startLogTime = async (req, res) => {
     const { projectId } = req.params;
 
     if(!isValidObjectId(projectId)){
-        return res.status(400).json({msg: "Invalid porject ID"})
+        // return res.status(400).json({msg: "Invalid porject ID"})
+        throw new ApiError(400, "Invalid project ID");
     }
 
     try {
         const project = await Project.findById(projectId);
         if(!project){
-            return res.status(404).json({ msg: "Project not found!!"})
+            // return res.status(404).json({ msg: "Project not found!!"})
+            throw new ApiError(404, "Project not found");
         }
     
         const newLog = await Log.create({
@@ -28,17 +30,21 @@ const startLogTime = async (req, res) => {
             timeSpent: 0,
         });
         if (!newLog) {
-            return res.status(401).json({msg: "Something went wrong while creating the log!!!"})
+            // return res.status(401).json({msg: "Something went wrong while creating the log!!!"})
+            throw new ApiError(401, "Something went wrong while creating the log");
         }
 
         // to update the project.logs array
         project.logs.push(newLog?._id);
         await project.save();
 
-        return res.status(200).json({
-            newLog,
-            msg: "Log started successfully!!"
-        })
+        return res.status(200).json(
+            // {
+            // newLog,
+            // msg: "Log started successfully!!"
+            // }
+            new ApiResponse(200, newLog, "Log started successfully!!")
+        )
     } catch (error) {
         return res.status(500).json({msg: "Something went wrong with the server while starting the log"})
     }
