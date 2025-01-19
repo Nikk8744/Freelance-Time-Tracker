@@ -1,5 +1,8 @@
 import { isValidObjectId } from "mongoose";
 import { Project } from "../models/project.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { User } from "../models/user.model.js";
 
 const createProject = async(req, res) => {
     const { name, description, startDate, endDate } = req.body;
@@ -20,7 +23,7 @@ const createProject = async(req, res) => {
          description,
          startDate,
          endDate,
-         userId,
+         owner: userId,
          totalHours: 0,
      });
  
@@ -96,7 +99,7 @@ const updateProject = async(req, res) => {
     try {
         const project = await Project.findById(projectId);
 
-        if(project.userId?.toString() !== req.user?._id.toString()){
+        if(project.owner?.toString() !== req.user?._id.toString()){
             return res.status(400).json({ msg: "You are not authorized to make changes to this project!!"})
         }
 
@@ -114,7 +117,7 @@ const updateProject = async(req, res) => {
         );
 
         if(!updateProject){
-            return res.status(401).json({msg: "Something went worong while updating project"})
+            return res.status(401).json({msg: "Something went wrong while updating project"})
         }
 
         return res.status(200).json({
@@ -145,6 +148,38 @@ const deleteProject = async(req, res) => {
     })
 };
 
+const addMembersToProject = async (req, res) => {
+    const { projectId, userId } = req.params;
+    if(!isValidObjectId(projectId) || !isValidObjectId(userId)){
+        throw new ApiError(401, "Invalid projectId or UserId")
+    };
+
+    const project = await Project.findById(projectId);
+    if (!project) {
+        throw new ApiError(404, "Project not found to add members!!")
+    };
+
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new ApiError(404, "User not found to add members!!")
+    }
+
+    if(project.owner.toString() !== req.user?._id.toString()){
+        throw new ApiError(401, "You are not the owner of this project, only owner can add members")
+    }
+    if(project.members.includes(userId)){
+        throw new ApiError(401, "User is already a member of this project")
+    };
+    
+    project.members.push(userId);
+    await project.save();
+
+    return res.status(200).json(
+        new ApiResponse(200, project, "Member added successfully!!")
+    )
+
+}
+
 export {
     createProject,
     getProjectById,
@@ -152,4 +187,5 @@ export {
     getAllProjects,
     updateProject,
     deleteProject,
+    addMembersToProject,
 }

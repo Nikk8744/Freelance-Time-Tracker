@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProject, deleteProject, getAllProjects, getAllProjectsOfAUser, getProjectById, updateProject } from "../controllers/project.controller.js";
+import { addMembersToProject, createProject, deleteProject, getAllProjects, getAllProjectsOfAUser, getProjectById, updateProject } from "../controllers/project.controller.js";
 import { isAdmin, verifyJWT } from "../middlewares/auth.middleware.js";
 import { projectUpdateValidationRules, projectValidationRules, validate } from "../validation/projectValidation.js";
 
@@ -175,4 +175,34 @@ router.route("/updateProject/:projectId").patch(verifyJWT, projectUpdateValidati
  */
 router.route("/deleteProject/:projectId").delete(verifyJWT, deleteProject);
 
+
+/**
+ * @swagger
+ * /project/addMembersToProject/{projectId}/user/{userId}:
+ *   patch:
+ *     summary: Add a member to a project
+ *     tags: [Project]
+ *     description: This endpoint allows a owner of project to add a member to a project.
+ *     parameters:
+ *       - name: projectId
+ *         in: path
+ *         required: true
+ *         description: The ID of the project in which you want to add members.
+ *         schema:
+ *           type: string
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: The ID of the member you want to add.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Member added successfully
+ *       404:
+ *         description: Project or user not found
+ *       401:
+ *         description: User is already member of this project  
+ */
+router.route("/addMembersToProject/:projectId/user/:userId").patch(verifyJWT, addMembersToProject)
 export default router;

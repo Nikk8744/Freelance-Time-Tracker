@@ -49,33 +49,37 @@ const getTotalHoursForADateRange = async (req, res) => {
     // then find logs where date is between start and end date
     // then calculate total hours for that data range logs
 
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate } = req.query;
     const userId = req.user?._id;
 
     if(!startDate || !endDate){
         return res.status(400).json({msg: "Please provide both start and end date!!"})
     }
 
-    const logs = await Log.find({userId, startTimeOfLog: { $gte: startDate, $lte: endDate }});
-    // console.log(logs)
-    if(!logs){
-        return res.status(404).json({msg: "No logs found for the date range you have provided"})
+    try {
+        const logs = await Log.find({userId, startTimeOfLog: { $gte: startDate, $lte: endDate }});
+        // console.log(logs)
+        if(!logs){
+            return res.status(404).json({msg: "No logs found for the date range you have provided"})
+        }
+    
+        const totalHoursForRange = logs.reduce((total, log) => total + log.timeSpent, 0);
+    
+        const roundedTotalHours = Math.round(totalHoursForRange * 100) / 100;
+    
+        // Convert total hours to hours and minutes format
+        const hours = Math.floor(roundedTotalHours);
+        const minutes = Math.round((roundedTotalHours - hours) * 60);
+    
+        return res.status(200).json({
+            // totalHoursForRange,
+            totalHoursForRange: roundedTotalHours,
+            totalHoursFormatted: `${hours} hours and ${minutes} minutes`,
+            msg: "The total hours of the user for the given date range is returned!!"
+        });
+    } catch (error) {
+        return res.status(500).json({msg: "Something went wrong with the server while getting the summary"})
     }
-
-    const totalHoursForRange = logs.reduce((total, log) => total + log.timeSpent, 0);
-
-    const roundedTotalHours = Math.round(totalHoursForRange * 100) / 100;
-
-    // Convert total hours to hours and minutes format
-    const hours = Math.floor(roundedTotalHours);
-    const minutes = Math.round((roundedTotalHours - hours) * 60);
-
-    return res.status(200).json({
-        // totalHoursForRange,
-        totalHoursForRange: roundedTotalHours,
-        totalHoursFormatted: `${hours} hours and ${minutes} minutes`,
-        msg: "The total hours of the user for the given date range is returned!!"
-    });
 }
 
 export {

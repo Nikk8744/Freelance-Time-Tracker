@@ -1,5 +1,5 @@
 import { User } from "../models/user.model.js";
-import { ApiError } from "../utils/ApIError.js";
+import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 const registerUser = async (req, res) => {
@@ -83,7 +83,8 @@ const loginUser = async (req, res) => {
     // console.log(isPasswordValid)
     if (!isPasswordValid) {
         // return res.status(401).json({ msg: "Invalid password or credentials"})
-        throw new ApiError(401, "Invalid password or credentials")
+        // throw new ApiError(401, "Invalid password or credentials")
+        return res.status(401).json( new ApiError( 401, "Invalid password or credentials"))
     };
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)

@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import connectDB from './db/index.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import errorHandler from './middlewares/errorHandler.middleware.js';
+
 
 const app = express();
 
@@ -44,6 +46,8 @@ app.use(express.json())
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
+// app.use(errorHandler);
+
 // all routes
 import userRoutes from './routes/user.routes.js'
 import projectRoutes from './routes/project.routes.js'
@@ -53,7 +57,7 @@ import taskRoutes from './routes/task.routes.js'
 
 // // routes udage
 app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/project", projectRoutes);
+app.use("/api/v1/project", projectRoutes, errorHandler);
 app.use("/api/v1/logs", logRoutes);
 app.use("/api/v1/summary", summaryRoutes);
 app.use("/api/v1/task", taskRoutes);

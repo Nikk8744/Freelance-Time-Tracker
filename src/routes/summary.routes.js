@@ -27,24 +27,21 @@ router.route("/getTotalHoursPerProject").get(verifyJWT, getTotalHoursPerProject)
  *     summary: Get the total hours for a specific date range
  *     tags: [Summary]
  *     description: This endpoint allows user to get the total hours for a specific date range
- *     requestBody: 
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - startDate
- *               - endDate
- *             properties:
- *               startDate:
- *                 type: string
- *                 format: date
- *                 description: Date from when you want to get the total hours
- *               endDate:
- *                 type: string
- *                 format: date
- *                 description: Date till when you want to get the total hours
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: Start date of the range (YYYY-MM-DD)
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: End date of the range (YYYY-MM-DD)
  *     responses:
  *       200:
  *         description: Total Hours for a specific date range retrived and calculated successfully
@@ -55,7 +52,7 @@ router.route("/getTotalHoursForADateRange").get(verifyJWT, getTotalHoursForADate
 
 /**
  * @swagger
- * /project/download/{projectId}/csv:
+ * /summary/download/{projectId}/csv:
  *   get:
  *     summary: To export the Project summaries 
  *     tags: [Summary]
@@ -73,6 +70,6 @@ router.route("/getTotalHoursForADateRange").get(verifyJWT, getTotalHoursForADate
  *       404:
  *         description: Project not found
  */
-router.route("/download/:projectId/download").get(verifyJWT, exportProjectSummariesInCsv)
+router.route("/download/:projectId/csv").get(verifyJWT, exportProjectSummariesInCsv)
 
 export default router;

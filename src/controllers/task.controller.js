@@ -1,11 +1,11 @@
 import { isValidObjectId } from "mongoose";
-import { ApiError } from "../utils/ApIError.js";
+import { ApiError } from "../utils/ApiError.js";
 import { Project } from "../models/project.model.js";
 import { Task } from "../models/task.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Log } from "../models/log.model.js";
 
-const createTask = async (req, res) => {
+const createTask = async (req, res, next) => {
     // take projectID, subject
     // description, checklist are optional
     const { projectId } = req.params;
@@ -23,7 +23,15 @@ const createTask = async (req, res) => {
         if (!project) {
             throw new ApiError(404, "Project not found")
         };
-    
+
+        if (!req.user || !req.user._id) {
+            throw new ApiError(401, "Unauthorized access");
+        }
+
+        if (!project.members.includes(req.user?._id) && project.owner?.toString() !== req.user?._id.toString()) {
+            throw new ApiError(403, "You are not a member of this project")
+        }
+
         const task = await Task.create({
             subject,
             description,
@@ -39,7 +47,8 @@ const createTask = async (req, res) => {
             new ApiResponse(200, task, "Task created successfully :)")
         );
     } catch (error) {
-        throw new ApiError(500, "Internal Server Error while creating task!!");
+        // throw new ApiError(500, "Internal Server Error while creating task!!", error);
+        next(error)
     };
 };
 

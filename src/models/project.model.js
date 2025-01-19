@@ -35,7 +35,7 @@ const projectSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Log"
         }],
-        userId: {
+        owner: {
             type: Schema.Types.ObjectId,
             ref: "User",
             required: true
@@ -43,7 +43,13 @@ const projectSchema = new Schema(
         totalHours: {
             type: Number,
             default: 0,
-        }
+        },
+        members: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
     },
     {
         timestamps: true,
