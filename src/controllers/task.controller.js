@@ -18,7 +18,7 @@ const createTask = async (req, res, next) => {
         throw new ApiError(400, "Subject is required")
     };
 
-    try {
+    // try {
         const project = await Project.findById(projectId);
         if (!project) {
             throw new ApiError(404, "Project not found")
@@ -47,10 +47,10 @@ const createTask = async (req, res, next) => {
         return res.status(201).json(
             new ApiResponse(200, {Your_Tasks: task}, "Task created successfully :)")
         );
-    } catch (error) {
-        // throw new ApiError(500, "Internal Server Error while creating task!!", error);
-        next(error)
-    };
+    // } catch (error) {
+    //     // throw new ApiError(500, "Internal Server Error while creating task!!", error);
+    //     next(error)
+    // };
 };
 
 const updateTask = async (req, res) => {
