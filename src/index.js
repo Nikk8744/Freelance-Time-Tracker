@@ -7,9 +7,14 @@ import connectDB from './db/index.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import errorHandler from './middlewares/errorHandler.middleware.js';
-
+import cors from 'cors'
 
 const app = express();
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true
+}))
 
 // Apply rate limiting to all requests
 // ye ek linit set krega so that ek user uss limit jitni requests hi kr skta
