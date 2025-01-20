@@ -14,7 +14,7 @@ const createTask = async (req, res, next) => {
     }
 
     const { subject, description, checklist, dueDate } = req.body;
-    if (!subject || description) {
+    if (!subject || !description) {
         throw new ApiError(400, "Subject is required")
     };
 
