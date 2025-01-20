@@ -1,39 +1,70 @@
-## Freelance Time Tracker
+# Freelancer Time Tracker API
 
-#### Things to do:
-- Create a simple time tracker for freelancers to track their work hours. ✔️
-- The tracker should be able to add, remove, and list tasks. ✔️
-- The tracker should be able to calculate the total hours worked for each task. ✔️
-- The tracker should be able to calculate the total hours worked for all tasks. ✔️
-- The tracker should be able to edit, update and delete logs. ✔️
-- The tracker should be able to export logs to a CSV file. ✔️
-- Add validation logic. - express-validator or joi for validation. ✔️
-    - Validate task name and description. ✔️
-    - Validate start and end time. ✔️
-    - Validate hours worked is a number and not negative. ✔️
-    - validate that start time is before end time. ✔️
-    - validate that task subject and startdate is not empty.✔️
-    - validate that start and end time is in the correct format. ✔️
-- Add error handling.
+## Overview
+***The Freelancer Time Tracker API is a RESTful API built using Express.js and MongoDB to help freelancers track time spent on various projects and manage tasks. It also allows project owners to manage team members, while generating work summaries. This API provides functionality for project management, task management, time logging, and generating summary reports.***
 
-##### Advance to dos
-- can add task mgmt system also - ✔️
+### Core Features:
+- **Project Management:** Create, update, and delete & get projects.
+- **Time Logging:** Log time entries against specific projects with timestamps and descriptions.
+- **Task Management:** Create and manage tasks within projects and assign them to team members.
+- **Task Time Logging:** Log time entries against tasks for more detailed tracking.
+- **Project Member Management:** Project owners can add or remove members to/from the project.
+- **Summary Reports:** Generate summaries such as hours worked per project, total hours for a date range, and task-based reports.
+- **User Authentication:** Secure access with user authentication to ensure freelancers can only access their own data.
+- **Data Validation:** Middleware to validate incoming request data.
+- **Export Functionality:** (Future enhancement) Allow exporting summaries as PDF or CSV files.
+- **Rate Limiting:** Limit the number of requests per IP to prevent abuse.
+- **API Documentation:** Interactive Swagger UI for easy access to API endpoints.
 
-## new project feature
-- add a owner to project - the owner can be a user/ the one who created the project
-- add a team/members to project - the team/members can be a list of users
-- only those team members can create their tasks in that project
-- 
+### Technologies
+- Node.js - JavaScript runtime for building the server.
+- Express.js - Web framework for handling API routes and server setup.
+- MongoDB - NoSQL database for storing project, task, and time log data.
+- Mongoose - ODM for MongoDB to model data and interact with the database.
+- JWT (JSON Web Token) - Used for user authentication and session management.
 
+### API Endpoints
+#### Project Management
+- **Create Project**: POST /api/v1/project
+- **Get Projects**: GET /api/v1/project
+- **Get Project By ID**: GET /api/v1/project/:projectId
+- **Update Project**: PUT /api/v1/project/:projectId
+- **Delete Project**: DELETE /api/v1/project/:projectId
+#### Task Management
+- **Create Task**: POST /api/v1/project/:projectId/task
+- **Get Tasks**: GET /api/v1/project/:projectId/task
+- **Get Task By ID**: GET /api/v1/task/:taskId
+- **Update Task**: PUT /api/v1/task/:taskId
+- **Delete Task**: DELETE /api/v1/task/:taskId
+#### Time Logging
+- **Log Time for Project**: POST /api/v1/project/:projectId/logs
+- **Log Time for Task**: POST /api/v1/task/:taskId/logs
+- **Get Time Logs**: GET /api/v1/project/:projectId/logs or GET /api/v1/task/:taskId/logs
+#### Project Member Management
+- **Add Member**: POST /api/v1/project/:projectId/members/:userId
+- **Remove Member**: DELETE /api/v1/project/:projectId/members/:userId
+#### Summary Reports
+- **Generate Project** Summary: GET /api/v1/project/:projectId/summary
+- **Generate Date** Range Summary: GET /api/v1/summary?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
+#### Authentication
+- **Register:** POST /api/v1/user/register
+- **Login:** POST /api/v1/user/login
 
------
-- when i delete a log it should be deleted form project and task as well. ✔️
+### API Documentation
+```
+/api-docs
+```
 
+### Installation
+```javascript
+cd <into the folder>
+npm i
 
-_________________________
+// set the environment variables
+PORT=<your_port>
+MONGODB_URI=<your_mongodb_uri>
 
-- when a log is added it should be added to project.logs array as well ✔️
-- when a log is removed/deleted it should be removed from project.logs array as well✔️
-- log duration calculation can be done in hours - need to update the calculation logic. ✔️
-- implement all the validation logic for all routes and parameters ✔️
-- when log is deleted the totalTimeSpentOnatask of that log should be removed
+// Set your secret keys accordingly 
+
+npm start
+```
