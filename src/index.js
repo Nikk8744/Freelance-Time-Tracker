@@ -34,7 +34,8 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://localhost:${process.env.PORT}/api/v1`, // idhar base url aayega
+                // url: `http://localhost:${process.env.PORT}/api/v1`, // idhar base url aayega
+                url: `https://freelance-time-tracker.onrender.com/api/v1`,
                 description: 'Local development server'
             },
         ],
@@ -69,9 +70,13 @@ app.use("/api/v1/task", taskRoutes);
 
 connectDB()
     .then(() => {
-        app.listen(process.env.PORT || 5000, () => {
-            console.log(`Server is running on port ${process.env.PORT}`);   
-        })
+        app.listen(
+            `https://freelance-time-tracker.onrender.com`,
+            // process.env.PORT || 5000, 
+            () => {
+                console.log(`Server is running on port ${process.env.PORT}`);   
+            }
+        )
     })
     .catch((err) => {
         console.log("MongoDB connection failed", err)
