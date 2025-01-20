@@ -71,8 +71,8 @@ app.use("/api/v1/task", taskRoutes);
 connectDB()
     .then(() => {
         app.listen(
-            `https://freelance-time-tracker.onrender.com`,
-            // process.env.PORT || 5000, 
+            // `https://freelance-time-tracker.onrender.com`,
+            process.env.PORT || 5000, 
             () => {
                 console.log(`Server is running on port ${process.env.PORT}`);   
             }
