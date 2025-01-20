@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { addMembersToProject, createProject, deleteProject, getAllProjects, getAllProjectsOfAUser, getProjectById, updateProject } from "../controllers/project.controller.js";
+import { addMembersToProject, createProject, deleteProject, getAllProjects, getAllProjectsOfAUser, getAllProjectsUserIsMemberOf, getProjectById, updateProject } from "../controllers/project.controller.js";
 import { isAdmin, verifyJWT } from "../middlewares/auth.middleware.js";
-import { projectUpdateValidationRules, projectValidationRules, validate } from "../validation/projectValidation.js";
+import { addMembersToProjectValidationRules, projectUpdateValidationRules, projectValidationRules, validate } from "../validation/projectValidation.js";
 
 const router = Router();
 
@@ -204,5 +204,30 @@ router.route("/deleteProject/:projectId").delete(verifyJWT, deleteProject);
  *       401:
  *         description: User is already member of this project  
  */
-router.route("/addMembersToProject/:projectId/user/:userId").patch(verifyJWT, addMembersToProject)
+router.route("/addMembersToProject/:projectId/user/:userId").patch(verifyJWT, addMembersToProjectValidationRules(), validate, addMembersToProject);
+
+/**
+ * @swagger
+ * /project/getAllProjectsUserIsMemberOf/{userId}:
+ *   get:
+ *     summary: Get all projects a user is a member of
+ *     tags: [Project]
+ *     description: This endpoint allows a user to get all projects they are a member of.
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: The ID of the user.
+ *         schema:
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Projects found successfully!!
+ *       401:
+ *         description: Invalid UserId
+ *       404:
+ *         description: User is not member of any project
+ */
+router.route("/getAllProjectsUserIsMemberOf/:userId").get(verifyJWT, getAllProjectsUserIsMemberOf);
+
 export default router;

@@ -9,13 +9,15 @@ const createProject = async(req, res) => {
     const userId = req.user?._id;
 
     if ([name, description, startDate, endDate].some((field) => field.trim() === "")) {
-        return res.status(400).json({msg: "All fields are required"})
+        // return res.status(400).json({msg: "All fields are required"})
+        throw new ApiError(400, "All fields are required!!")
     }
 
    try {
      const existingProject = await Project.findOne({name});
      if (existingProject) {
-         return res.status(400).json({mjsg: "Project with this name alraeady exists"})
+        //  return res.status(400).json({mjsg: "Project with this name alraeady exists"})
+        throw new ApiError(400, "Project with this name already exists!!")
      };
  
      const newProject = await Project.create({
@@ -28,13 +30,15 @@ const createProject = async(req, res) => {
      });
  
      if (!newProject) {
-         return res.status(401).json({ msg: "Something went wrong while creating project"})
+        //  return res.status(401).json({ msg: "Something went wrong while creating project"})
+        throw new ApiError(401, "Something went wrong while creating this project!!")
      }
  
-     return res.status(200).json({
-         newProject,
-         msg: "Project Created Successfully"
-     });
+     return res.status(200).json(
+        // {newProject,
+        //  msg: "Project Created Successfully"}
+        new ApiResponse(201, newProject, "Project Created Successfully!!")
+    );
    } catch (error) {
     return res.status(500).json({ msg: "Some server error occurred while creating project"})
    }
@@ -52,40 +56,37 @@ const getProjectById = async(req, res) => {
             return res.status(404).json({ msg: "Project Not Found!!"})
         };
     
-        return res.status(200).json({
-            project,
-            msg: "Project Fetched Successfully!! :)"
-        })
+        return res.status(200).json(
+            new ApiResponse(200, project, "Project Fetched Successfully!! :)")
+        )
     } catch (error) {
-        return res.status(500).json({msg: "Some server error occured while retriving project!! :("})
+        return res.status(500).json({msg: "Some server error occurred while retrieving project!! :("})
     }
 }
 
 const getAllProjectsOfAUser = async (req, res) => {
     const userId = req.user?._id;
 
-    const allProjects = await Project.find({ userId });
-    if (!allProjects) {
-        return res.status(400).json({msg: "Projecs not found you need to create project"})
+    const allProjects = await Project.find({ owner: userId });
+    if (!allProjects || allProjects.length === 0) {
+        return res.status(400).json({msg: "Projects not found. You need to create a project"})
     };
 
-    return res.status(200).json({
-        allProjects,
-        msg: "All project of user fetched successfully!!"
-    })
+    return res.status(200).json(
+        new ApiResponse(200, allProjects, "All projects of user fetched successfully!!")
+    )
 };
 
 const getAllProjects = async(req, res) => {
 
     const allProjects = await Project.find();
-    if (!allProjects) {
+    if (!allProjects || allProjects.length === 0) {
         return res.status(400).json({msg: "No projects found!!"})
     }
 
-    return res.status(200).json({
-        allProjects,
-        msg: "All projects fetched successfully!!"
-    });
+    return res.status(200).json(
+        new ApiResponse(200, allProjects, "All projects fetched successfully!!")
+    );
 };
 
 const updateProject = async(req, res) => {
@@ -120,13 +121,12 @@ const updateProject = async(req, res) => {
             return res.status(401).json({msg: "Something went wrong while updating project"})
         }
 
-        return res.status(200).json({
-            updateProject,
-            msg: "Project updated successfully!!"
-        });
+        return res.status(200).json(
+            new ApiResponse(200, updateProject, "Project updated successfully!!")
+        );
 
     } catch (error) {
-        return res.status(500).json({msg: "Some server error occured while updating project!! :("});
+        return res.status(500).json({msg: "Some server error occurred while updating project!! :("});
     } 
 };
 
@@ -136,16 +136,18 @@ const deleteProject = async(req, res) => {
         return res.status(401).json({msg: "Invalid objectId or project ID"})
     }
 
+    try {
+        const deleteProject = await Project.findByIdAndDelete(projectId);
+        if (!deleteProject) {
+            return res.status(404).json({msg: "Project not found to delete"})
+        }
 
-    const deleteProject = await Project.findByIdAndDelete(projectId);
-    if (!deleteProject) {
-        return res.status(404).json({msg: "Project not found to delete"})
+        return res.status(200).json(
+            new ApiResponse(200, deleteProject, "Project deleted successfully!!")
+        )
+    } catch (error) {
+        return res.status(500).json({msg: "Some server error occurred while deleting project!! :("})
     }
-
-    return res.status(200).json({
-        deleteProject,
-        msg: "Project deleted successfully!!"
-    })
 };
 
 const addMembersToProject = async (req, res) => {
@@ -177,7 +179,22 @@ const addMembersToProject = async (req, res) => {
     return res.status(200).json(
         new ApiResponse(200, project, "Member added successfully!!")
     )
+};
 
+const getAllProjectsUserIsMemberOf = async (req, res) => {
+    const { userId } = req.params; 
+    if (!isValidObjectId(userId)) {
+        throw new ApiError(401, "Invalid userId")
+    }
+
+    const projects = await Project.find({ members: userId });
+    if(!projects || projects.length === 0){
+        throw new ApiError(404, "User is not a member of any project")
+    };
+
+    return res.status(200).json(
+        new ApiResponse(200, {projects: projects}, "Projects user is a member of fetched successfully!!")
+    );
 }
 
 export {
@@ -188,4 +205,5 @@ export {
     updateProject,
     deleteProject,
     addMembersToProject,
+    getAllProjectsUserIsMemberOf,
 }

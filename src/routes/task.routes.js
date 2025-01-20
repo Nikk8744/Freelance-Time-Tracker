@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { addChecklistItem, createTask, deleteTask, getAllTasks, getProjectTasks, getTaskById, updateChecklistItem, updateTask } from "../controllers/task.controller.js";
+import { isAdmin, verifyJWT } from "../middlewares/auth.middleware.js";
+import { addChecklistItem, createTask, deleteTask, getAllTasks, getAllTasksOfUser, getProjectTasks, getTaskById, updateChecklistItem, updateTask } from "../controllers/task.controller.js";
+import { addChecklistItemValidationRules, createTaskValidationRules, updateTaskValidationRules, validate } from "../validation/taskValidation.js";
 
 const router = Router();
 
@@ -59,7 +60,7 @@ const router = Router();
  *       500:
  *         description: Server error.
  */
-router.route('/createTask/:projectId').post(verifyJWT, createTask);
+router.route('/createTask/:projectId').post(verifyJWT, createTaskValidationRules(), validate, createTask);
 
 /**
  * @swagger
@@ -103,7 +104,7 @@ router.route('/createTask/:projectId').post(verifyJWT, createTask);
  *       500:
  *         description: Server error.
  */
-router.route('/updateTask/:taskId').patch(verifyJWT, updateTask);
+router.route('/updateTask/:taskId').patch(verifyJWT, updateTaskValidationRules(), validate, updateTask);
 
 /**
  * @swagger
@@ -211,7 +212,7 @@ router.route ('/getProjectTasks/:projectId').get(verifyJWT, getProjectTasks);
  *       500:
  *         description: Server error.
  */
-router.route ('/getAllTasks').get(verifyJWT, getAllTasks);
+router.route ('/getAllTasks').get(verifyJWT, isAdmin, getAllTasks);
 
 /**
  * @swagger
@@ -248,7 +249,7 @@ router.route ('/getAllTasks').get(verifyJWT, getAllTasks);
  *       500:
  *         description: Server error.
  */
-router.route('/addChecklistItem/:taskId').patch(verifyJWT, addChecklistItem); // here post also works
+router.route('/addChecklistItem/:taskId').patch(verifyJWT, addChecklistItemValidationRules(), validate, addChecklistItem); // here post also works
 
 
 /**
@@ -307,5 +308,21 @@ router.route('/updateChecklistItem/task/:taskId/item/:itemId').patch(verifyJWT, 
  */
 router.route('/getTaskById/:taskId').get(verifyJWT, getTaskById)
 
+/**
+ * @swagger
+ * /task/getAllTasksOfUser:
+ *   get:
+ *     summary: Get all tasks of a user
+ *     tags: [Tasks]
+ *     description: This endpoint allows a user to fetch all tasks assigned to them.
+ *     responses:
+ *       200:
+ *         description: Tasks retrieved successfully
+ *       404:
+ *         description: User not found
+ *       401:
+ *         description: Unauthorized or Invalid UserId
+ */
+router.route('/getAllTasksOfUser').get(verifyJWT, getAllTasksOfUser)
 
 export default router;

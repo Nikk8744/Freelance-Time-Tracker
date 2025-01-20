@@ -13,8 +13,8 @@ const createTask = async (req, res, next) => {
         throw new ApiError(400, "Invalid Project ID")
     }
 
-    const { subject, description, checklist } = req.body;
-    if (!subject) {
+    const { subject, description, checklist, dueDate } = req.body;
+    if (!subject || description) {
         throw new ApiError(400, "Subject is required")
     };
 
@@ -38,13 +38,14 @@ const createTask = async (req, res, next) => {
             checklist,
             project: projectId,
             assignedUser: req.user?._id,
+            dueDate: dueDate ? new Date(dueDate) : new Date(),
         });
         if (!task) {
             throw new ApiError(500, "Failed to create task")
         };
     
         return res.status(201).json(
-            new ApiResponse(200, task, "Task created successfully :)")
+            new ApiResponse(200, {Your_Tasks: task}, "Task created successfully :)")
         );
     } catch (error) {
         // throw new ApiError(500, "Internal Server Error while creating task!!", error);
@@ -136,6 +137,7 @@ const getProjectTasks = async (req, res) => {
 };
 
 const getAllTasks = async (req, res) => {
+
     try {
         const allTasks = await Task.find().populate("project").populate("assignedUser")
         if(!allTasks || allTasks.length === 0){
@@ -284,6 +286,26 @@ const getTaskById = async (req, res) => {
         }
 };
 
+const getAllTasksOfUser = async (req, res) => {
+    const userId = req.user?._id;
+    if (!userId) {
+        throw new ApiError(401, "Unauthorized");
+    }
+    if(!isValidObjectId(userId)){
+        throw new ApiError(401, "Invalid User Id");
+    }
+
+    const tasksOfUser = await Task.find({assignedUser: userId}).sort({ createdAt: -1})
+                            //   .populate("assignedUser").populate("project");
+    if(!tasksOfUser){
+        throw new ApiError(404, "No tasks found for this user");
+    }
+    
+    return res.status(200).json(
+        new ApiResponse(200, tasksOfUser, "Tasks for the user fetched successfully :)")
+    )
+}
+
 export {
     createTask,
     updateTask,
@@ -295,4 +317,5 @@ export {
     updateChecklistItem,
     // getTasksForAProject,
     getTaskById,
+    getAllTasksOfUser,
 }

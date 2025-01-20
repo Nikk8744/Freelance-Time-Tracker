@@ -1,5 +1,7 @@
 import { ApiError } from "../utils/ApiError.js";
 
+// global error handler
+// to use this you need to use try and catch and pass the catch error in next(err).
 const errorHandler = (err, req, res, next) => {
     if (err instanceof ApiError) {
         return res.status(err.statusCode).json({

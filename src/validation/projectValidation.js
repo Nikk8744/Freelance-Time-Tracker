@@ -1,4 +1,4 @@
-import { body, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 
 const projectValidationRules = () => [
     body('name')
@@ -56,6 +56,18 @@ const projectUpdateValidationRules = () => [
         })
 ];
 
+const addMembersToProjectValidationRules = () => [
+    param('projectId')
+        .not().isEmpty()
+        .withMessage('Project ID is required')
+        .isMongoId().withMessage('Invalid project ID'),
+    
+    param('userId')
+        .not().isEmpty()
+        .withMessage('Project ID is required')
+        .isMongoId().withMessage('Invalid project ID')
+];
+
 const validate = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -67,5 +79,6 @@ const validate = (req, res, next) => {
 export {
     projectValidationRules,
     validate,
-    projectUpdateValidationRules
+    projectUpdateValidationRules,
+    addMembersToProjectValidationRules,
 }
