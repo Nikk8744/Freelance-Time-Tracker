@@ -25,27 +25,39 @@
 
 ### API Endpoints
 #### Project Management
-- **Create Project**: POST /api/v1/project
-- **Get Projects**: GET /api/v1/project
-- **Get Project By ID**: GET /api/v1/project/:projectId
-- **Update Project**: PUT /api/v1/project/:projectId
-- **Delete Project**: DELETE /api/v1/project/:projectId
-#### Task Management
-- **Create Task**: POST /api/v1/project/:projectId/task
-- **Get Tasks**: GET /api/v1/project/:projectId/task
-- **Get Task By ID**: GET /api/v1/task/:taskId
-- **Update Task**: PUT /api/v1/task/:taskId
-- **Delete Task**: DELETE /api/v1/task/:taskId
-#### Time Logging
-- **Log Time for Project**: POST /api/v1/project/:projectId/logs
-- **Log Time for Task**: POST /api/v1/task/:taskId/logs
-- **Get Time Logs**: GET /api/v1/project/:projectId/logs or GET /api/v1/task/:taskId/logs
-#### Project Member Management
+- **Create a Project:** POST /project/createProjet
+- **Get Project by ID:**  GET /project/getProjectById/{projectI}
+- **Get Projects of a User:** GET /project/getProjectsOfAUser
+- **Get All Projects:** GET /project/getAllProjects
+- **Update a Project:** PATCH /project/updateProject/{projectId}
+- **Delete a Project:** DELETE /project/deleteProject/{projectId}
+- **Add Members to a Project:** PATCH /project/addMembersToProject/{projectId}/user/{userId}
+- **Get All Projects User is Member of:** GET /project/getAllProjectsUserIsMemberOf/{userId}
+#### Task Endpoints
+- **Create a Task:** POST /task/createTask/{projectId}
+- **Update a Task:** PATCH /task/updateTask/{taskId}
+- **Delete a Task:** DELETE /task/deleteTask/{taskId}
+- **Get Tasks for a Project:** GET /task/getProjectTasks/{projectId}
+- **Get All Tasks:** GET /task/getAllTasks
+- **Add a Checklist Item to a Task:** PATCH /task/addChecklistItem/{taskId}
+- **Update a Checklist Item for a Task:** PATCH /task/updateChecklistItem/task/{taskId}/item/{itemId}
+
+- **Get Task by ID**: GET /task/getTaskById/{taskId}
+- **Get All Tasks of a User:** GET /task/getAllTasksOfUser
+#### Log Endpoints
+- **Start a Log:** POST /logs/start/{projectId}
+- **Stop a Log:** POST /logs/stop/{logId}/task/{taskId}
+- **Update a Log:** PATCH /logs/updateLog/{logId}
+- **Delete a Log:** DELETE /logs/deleteLog/{logId}
+- **Get All Logs for a Project:** GET /logs/getAllLogsOfAProject/{projectId}
+- **Get All Logs for a User:** GET /logs/getAllLogsOfAUser
+- **Get All Logs for a Task:** GET /logs/getAllLogsOfATask/{taskId}
+#### Project Member Manageent
 - **Add Member**: POST /api/v1/project/:projectId/members/:userId
 - **Remove Member**: DELETE /api/v1/project/:projectId/members/:userId
 #### Summary Reports
-- **Generate Project** Summary: GET /api/v1/project/:projectId/summary
-- **Generate Date** Range Summary: GET /api/v1/summary?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
+- **Get Total Hours Per Project Summary:** GET /api/v1/summary/getTotalHoursPerProject
+- **Get Total Hours for date range Range Summary:** GET /api/v1/summary/getTotalHoursForADateRange
 #### Authentication
 - **Register:** POST /api/v1/user/register
 - **Login:** POST /api/v1/user/login
